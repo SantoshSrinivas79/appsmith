@@ -10,10 +10,14 @@ import {
 } from "utils/WidgetFactory";
 import Skeleton from "components/utils/Skeleton";
 import * as Sentry from "@sentry/react";
+import { retryPromise } from "utils/AppsmithUtils";
+import withMeta, { WithMeta } from "./MetaHOC";
 
-const RichtextEditorComponent = lazy(() =>
-  import(
-    /* webpackChunkName: "rte",webpackPrefetch: 2 */ "components/designSystems/appsmith/RichTextEditorComponent"
+const RichTextEditorComponent = lazy(() =>
+  retryPromise(() =>
+    import(
+      /* webpackChunkName: "rte",webpackPrefetch: 2 */ "components/designSystems/appsmith/RichTextEditorComponent"
+    ),
   ),
 );
 
@@ -57,21 +61,18 @@ class RichTextEditorWidget extends BaseWidget<
   }
 
   onValueChange = (text: string) => {
-    this.updateWidgetMetaProperty("text", text);
-    if (this.props.onTextChange) {
-      super.executeAction({
-        dynamicString: this.props.onTextChange,
-        event: {
-          type: EventType.ON_TEXT_CHANGE,
-        },
-      });
-    }
+    this.props.updateWidgetMetaProperty("text", text, {
+      dynamicString: this.props.onTextChange,
+      event: {
+        type: EventType.ON_TEXT_CHANGE,
+      },
+    });
   };
 
   getPageView() {
     return (
       <Suspense fallback={<Skeleton />}>
-        <RichtextEditorComponent
+        <RichTextEditorComponent
           onValueChange={this.onValueChange}
           defaultValue={this.props.text || ""}
           widgetId={this.props.widgetId}
@@ -89,12 +90,7 @@ class RichTextEditorWidget extends BaseWidget<
   }
 }
 
-export interface InputValidator {
-  validationRegex: string;
-  errorMessage: string;
-}
-
-export interface RichTextEditorWidgetProps extends WidgetProps {
+export interface RichTextEditorWidgetProps extends WidgetProps, WithMeta {
   defaultText?: string;
   text?: string;
   placeholder?: string;
@@ -105,5 +101,5 @@ export interface RichTextEditorWidgetProps extends WidgetProps {
 
 export default RichTextEditorWidget;
 export const ProfiledRichTextEditorWidget = Sentry.withProfiler(
-  RichTextEditorWidget,
+  withMeta(RichTextEditorWidget),
 );
