@@ -6,10 +6,9 @@ import {
   OrganizationDetails,
 } from "constants/ReduxActionConstants";
 import Fuse from "fuse.js";
-import { UserApplication } from "constants/userConstants";
 
 const fuzzySearchOptions = {
-  keys: ["applications.name"],
+  keys: ["applications.name", "organization.name"],
   shouldSort: true,
   threshold: 0.5,
   location: 0,
@@ -19,19 +18,10 @@ const fuzzySearchOptions = {
 const getApplicationsState = (state: AppState) => state.ui.applications;
 const getApplications = (state: AppState) =>
   state.ui.applications.applicationList;
-export const getCurrentApplication = (state: AppState): UserApplication => {
-  const appId = state.entities.pageList.applicationId;
-  const apps = state.ui.users.current
-    ? state.ui.users.current.applications
-    : [];
-  const app = apps.find(app => app.id === appId);
-
-  return (
-    app || {
-      id: "",
-      name: "",
-    }
-  );
+export const getCurrentApplication = (
+  state: AppState,
+): ApplicationPayload | undefined => {
+  return state.ui.applications.currentApplication;
 };
 const getApplicationSearchKeyword = (state: AppState) =>
   state.ui.applications.searchKeyword;
@@ -39,6 +29,8 @@ export const getIsDeletingApplication = (state: AppState) =>
   state.ui.applications.deletingApplication;
 export const getIsDuplicatingApplication = (state: AppState) =>
   state.ui.applications.duplicatingApplication;
+export const getIsSavingAppName = (state: AppState) =>
+  state.ui.applications.isSavingAppName;
 export const getUserApplicationsOrgs = (state: AppState) => {
   return state.ui.applications.userOrgs;
 };

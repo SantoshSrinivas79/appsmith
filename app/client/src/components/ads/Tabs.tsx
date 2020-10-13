@@ -3,7 +3,7 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import styled from "styled-components";
 import Icon, { IconName, IconSize } from "./Icon";
-import { Classes } from "./common";
+import { Classes, CommonComponentProps } from "./common";
 
 export type TabProp = {
   key: string;
@@ -24,16 +24,16 @@ const TabsWrapper = styled.div<{ shouldOverflow?: boolean }>`
   }
   .react-tabs__tab-panel {
     height: calc(100% - 32px);
-    overflow: scroll;
+    overflow: auto;
   }
   .react-tabs__tab-list {
     display: flex;
     align-items: center;
     border-bottom: ${props => props.theme.spaces[1] - 2}px solid
-      ${props => props.theme.colors.blackShades[3]};
-    color: ${props => props.theme.colors.blackShades[6]};
+      ${props => props.theme.colors.tabs.border};
+    color: ${props => props.theme.colors.tabs.normal};
     path {
-      fill: ${props => props.theme.colors.blackShades[6]};
+      fill: ${props => props.theme.colors.tabs.normal};
     }
     ${props =>
       props.shouldOverflow &&
@@ -57,17 +57,17 @@ const TabsWrapper = styled.div<{ shouldOverflow?: boolean }>`
     position: relative;
   }
   .react-tabs__tab:hover {
-    color: ${props => props.theme.colors.blackShades[9]};
+    color: ${props => props.theme.colors.tabs.hover};
     path {
-      fill: ${props => props.theme.colors.blackShades[9]};
+      fill: ${props => props.theme.colors.tabs.hover};
     }
   }
   .react-tabs__tab--selected {
-    color: ${props => props.theme.colors.blackShades[9]};
+    color: ${props => props.theme.colors.tabs.hover};
     background-color: transparent;
 
     path {
-      fill: ${props => props.theme.colors.blackShades[9]};
+      fill: ${props => props.theme.colors.tabs.hover};
     }
 
     &::after {
@@ -93,7 +93,7 @@ const TabsWrapper = styled.div<{ shouldOverflow?: boolean }>`
     box-shadow: none;
     border-color: transparent;
     path {
-      fill: ${props => props.theme.colors.blackShades[9]};
+      fill: ${props => props.theme.colors.tabs.hover};
     }
   }
 `;
@@ -105,7 +105,7 @@ const TabTitle = styled.span`
   letter-spacing: ${props => props.theme.typography.h4.letterSpacing}px;
 `;
 
-type TabbedViewComponentType = {
+type TabbedViewComponentType = CommonComponentProps & {
   tabs: Array<TabProp>;
   selectedIndex?: number;
   onSelect?: Function;
@@ -114,7 +114,10 @@ type TabbedViewComponentType = {
 
 export const TabComponent = (props: TabbedViewComponentType) => {
   return (
-    <TabsWrapper shouldOverflow={props.overflow}>
+    <TabsWrapper
+      shouldOverflow={props.overflow}
+      data-cy={props.cypressSelector}
+    >
       <Tabs
         selectedIndex={props.selectedIndex}
         onSelect={(index: number) => {

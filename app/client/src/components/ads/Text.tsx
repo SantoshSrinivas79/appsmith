@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ThemeProp, Classes } from "./common";
+import { ThemeProp, Classes, CommonComponentProps } from "./common";
 
 export enum TextType {
   P1 = "p1",
@@ -24,11 +24,12 @@ export enum FontWeight {
   NORMAL = "normal",
 }
 
-export type TextProps = {
+export type TextProps = CommonComponentProps & {
   type: TextType;
   underline?: boolean;
   italic?: boolean;
   case?: Case;
+  className?: string;
   weight?: FontWeight;
   highlight?: boolean;
 };
@@ -37,23 +38,24 @@ const typeSelector = (props: TextProps & ThemeProp): string => {
   let color = "";
   switch (props.type) {
     case TextType.P1:
-      color = props.theme.colors.blackShades[6];
+      color = props.theme.colors.text.normal;
       break;
     case TextType.P2:
-      color = props.theme.colors.blackShades[6];
+      color = props.theme.colors.text.normal;
       break;
     case TextType.P3:
-      color = props.theme.colors.blackShades[6];
+      color = props.theme.colors.text.normal;
       break;
     default:
-      color = props.theme.colors.blackShades[7];
+      color = props.theme.colors.text.heading;
       break;
   }
   return color;
 };
 
-const Text = styled.span.attrs(() => ({
-  className: Classes.TEXT,
+const Text = styled.span.attrs((props: TextProps) => ({
+  className: props.className ? props.className + Classes.TEXT : Classes.TEXT,
+  "data-cy": props.cypressSelector,
 }))<TextProps>`
   text-decoration: ${props => (props.underline ? "underline" : "unset")};
   font-style: ${props => (props.italic ? "italic" : "normal")};
@@ -68,7 +70,7 @@ const Text = styled.span.attrs(() => ({
   letter-spacing: ${props =>
     props.theme.typography[props.type].letterSpacing}px;
   color: ${props =>
-    props.highlight ? props.theme.colors.blackShades[9] : typeSelector(props)};
+    props.highlight ? props.theme.colors.text.hightlight : typeSelector(props)};
   text-transform: ${props => (props.case ? props.case : "none")};
 `;
 

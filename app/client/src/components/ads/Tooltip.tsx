@@ -19,27 +19,30 @@ const TooltipWrapper = styled.div<{ variant?: Variant }>`
     border-radius: 0px;
     background-color: ${props =>
       props.variant === "dark"
-        ? props.theme.colors.blackShades[0]
-        : props.theme.colors.blackShades[8]};
+        ? props.theme.colors.tooltip.darkBg
+        : props.theme.colors.tooltip.lightBg};
   }
   div.${Classes.POPOVER_ARROW} {
     display: block;
   }
   .${Classes.TOOLTIP} {
-    box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.35);a
+    box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.35);
   }
-  .${Classes.TOOLTIP} .${CsClasses.BP3_POPOVER_ARROW_BORDER},
-  &&&& .${Classes.TOOLTIP} .${CsClasses.BP3_POPOVER_ARROW_FILL} {
+  .${Classes.TOOLTIP}
+    .${CsClasses.BP3_POPOVER_ARROW_BORDER},
+    &&&&
+    .${Classes.TOOLTIP}
+    .${CsClasses.BP3_POPOVER_ARROW_FILL} {
     fill: ${props =>
       props.variant === "dark"
-        ? props.theme.colors.blackShades[0]
-        : props.theme.colors.blackShades[8]};
+        ? props.theme.colors.tooltip.darkBg
+        : props.theme.colors.tooltip.lightBg};
   }
 `;
 
 const TooltipComponent = (props: TooltipProps) => {
   return (
-    <TooltipWrapper variant={props.variant}>
+    <TooltipWrapper variant={props.variant} data-cy={props.cypressSelector}>
       <Tooltip
         content={props.content}
         position={props.position}
